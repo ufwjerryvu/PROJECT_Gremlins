@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>App.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Gremlins</a> &gt; <a href="index.source.html" class="el_package">gremlins</a> &gt; <span class="el_source">App.java</span></div><h1>App.java</h1><pre class="source lang-java linenums">package gremlins;
+
+import processing.core.*;
+import processing.data.*;
+
+import java.util.*;
+import java.lang.*;
+import java.io.*;
+
+public class App extends PApplet {
+    /*
+    SECTION 1: DECLARATION AND INTIALIZATION OF CLASS ATTRIBUTES
+        AND GAME PARAMETERS
+    */
+    public static final int WINDOW_WIDTH = 720;
+    public static final int WINDOW_HEIGHT = 720;
+    public static final int SPRITESIZE = 20;
+    public static final int BOTTOM_BAR = 60;
+
+    public static final int FPS = 60;
+
+    public String config_path;
+    
+    /*
+    NOTE:  
+        - These attributes are the image instances that are
+        going to be representing the sprites.
+    */
+    public PImage stonewall, gremlin, slime, fireball, door, powerup;
+    
+    public PImage portal_available, portal_unavailable;
+
+    public PImage brickwall_normal, brickwall_destroyed_0, brickwall_destroyed_1, 
+        brickwall_destroyed_2, brickwall_destroyed_3;
+
+    public PImage wizard_left, wizard_right, wizard_up, wizard_down;
+
+    /*
+    NOTE:
+        - All the game display, logic, and sequences are implemented
+        in the `Game` class and is going to be carried out by the only
+        `game` instance.
+    */
+    public Game game;
+
+    /*
+    SECTION 2: CONSTRUCTOR(S)
+    */
+<span class="fc" id="L49">    public App() {</span>
+<span class="fc" id="L50">        this.config_path = &quot;config.json&quot;;</span>
+<span class="fc" id="L51">    }</span>
+
+    /*
+    SECTION 3: OVERLOADING/OVERRIDING PApplet METHODS
+     */
+    public void settings() {
+        /*
+        NOTE:
+            - Specifying the size of the game window.
+         */
+<span class="fc" id="L61">        size(WINDOW_WIDTH, WINDOW_HEIGHT);</span>
+<span class="fc" id="L62">    }</span>
+
+    public void setup() {
+
+<span class="fc" id="L66">        frameRate(FPS);</span>
+
+        /*
+        NOTE:
+            - The hairy block below loads all the images of all the sprites 
+            from their respective .png files.
+        */
+<span class="fc" id="L73">        this.stonewall = loadImage(this.getClass().getResource(&quot;stonewall.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L74">        this.gremlin = loadImage(this.getClass().getResource(&quot;gremlin.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L75">        this.slime = loadImage(this.getClass().getResource(&quot;slime.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L76">        this.fireball = loadImage(this.getClass().getResource(&quot;fireball.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L77">        this.door = loadImage(this.getClass().getResource(&quot;door.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L78">        this.powerup = loadImage(this.getClass().getResource(&quot;powerup.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+
+<span class="fc" id="L80">        this.portal_available = loadImage(this.getClass().getResource(&quot;portal_available.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L81">        this.portal_unavailable = loadImage(this.getClass().getResource(&quot;portal_unavailable.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L82">        PImage[] portal_status = {this.portal_available, this.portal_unavailable};</span>
+
+<span class="fc" id="L84">        this.brickwall_normal = loadImage(this.getClass().getResource(&quot;brickwall.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L85">        this.brickwall_destroyed_0 = loadImage(this.getClass().getResource(&quot;brickwall_destroyed0.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L86">        this.brickwall_destroyed_1 = loadImage(this.getClass().getResource(&quot;brickwall_destroyed1.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L87">        this.brickwall_destroyed_2 = loadImage(this.getClass().getResource(&quot;brickwall_destroyed2.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L88">        this.brickwall_destroyed_3 = loadImage(this.getClass().getResource(&quot;brickwall_destroyed3.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L89">        PImage[] brickwall_stages = {this.brickwall_normal, this.brickwall_destroyed_0, this.brickwall_destroyed_1, </span>
+            this.brickwall_destroyed_2, this.brickwall_destroyed_3};
+
+<span class="fc" id="L92">        this.wizard_left = loadImage(this.getClass().getResource(&quot;wizard0.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L93">        this.wizard_right = loadImage(this.getClass().getResource(&quot;wizard1.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L94">        this.wizard_up = loadImage(this.getClass().getResource(&quot;wizard2.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L95">        this.wizard_down = loadImage(this.getClass().getResource(&quot;wizard3.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L96">        PImage[] wizard_directions = {this.wizard_left, this.wizard_right, this.wizard_up, this.wizard_down};</span>
+
+
+        /*
+        NOTE:
+            - Reading in the configuration from the JSON config file. 
+
+            - The function Game.loadMap() with all the parameters must be called
+            before its overloaded version with no parameters because the Game
+            class needs all of the intiliazed image representations.
+        */
+<span class="fc" id="L107">        JSONObject game_config = loadJSONObject(new File(this.config_path));</span>
+
+<span class="fc" id="L109">        game = new Game(game_config, this.stonewall, brickwall_stages, this.gremlin, wizard_directions, this.door,</span>
+            this.fireball, this.slime, this.powerup, portal_status);
+<span class="fc" id="L111">        game.loadMap();</span>
+<span class="fc" id="L112">    }</span>
+
+    private boolean released;
+    private int current_keycode;
+    private boolean shoot;
+    public void keyPressed(){
+        /*
+        NOTE:
+            - This ensures simultaneity.
+         */
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        if(this.keyCode == ' '){</span>
+<span class="nc" id="L123">            this.shoot = true;</span>
+<span class="nc" id="L124">            return;</span>
+        }
+
+<span class="fc" id="L127">        this.released = false;</span>
+<span class="fc" id="L128">        this.current_keycode = this.keyCode;</span>
+
+        //System.out.println(&quot;+ current: &quot; + this.current_keycode + &quot;; kc: &quot; + this.keyCode + &quot;; released: &quot; + released);
+<span class="fc" id="L131">    }</span>
+
+    public void keyReleased(){
+        /*
+        NOTE:
+            - This implementation is paramount as it ensures the 
+            smoothness of the character's movements. Without it, the
+            operating system's keyboard delay would take over.
+            
+            - Do not remove.
+         */
+<span class="pc bpc" id="L142" title="3 of 4 branches missed.">        if(this.current_keycode != this.keyCode &amp;&amp; !this.released){</span>
+<span class="nc" id="L143">            this.released = false;</span>
+        }else{
+<span class="fc" id="L145">            this.released = true;</span>
+        }
+
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">        if(this.keyCode == ' '){</span>
+<span class="nc" id="L149">            this.shoot = false;</span>
+        }
+
+<span class="fc" id="L152">    }</span>
+
+    public void draw() {
+        /*
+        NOTE:
+            - The code that is commented out below 
+            tests the performance of the game logic
+            and the draw function. The average is 
+            1ms.
+         */
+        //long start_time = System.currentTimeMillis();
+
+<span class="fc" id="L164">        background(0xCEA277);</span>
+<span class="fc" id="L165">        game.blit(this.current_keycode, this.released, this.shoot);</span>
+<span class="fc" id="L166">        game.draw(this);</span>
+
+        //System.out.println(System.currentTimeMillis()-start_time);
+<span class="fc" id="L169">    }</span>
+
+    public static void main(String[] args) {
+<span class="nc" id="L172">        PApplet.main(&quot;gremlins.App&quot;);</span>
+<span class="nc" id="L173">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Teleportal.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Gremlins</a> &gt; <a href="index.source.html" class="el_package">gremlins</a> &gt; <span class="el_source">Teleportal.java</span></div><h1>Teleportal.java</h1><pre class="source lang-java linenums">package gremlins;
+
+import processing.core.*;
+import processing.data.*;
+
+import java.util.*;
+import java.lang.*;
+import java.io.*;
+
+public class Teleportal extends Sprite{
+    /*
+    SECTION 1: DECLARATION AND INITIALIZATION OF CLASS ATTRIBUTES
+        AND PARAMETERS.
+    */
+    private PImage available;
+    private PImage unavailable;
+
+    private PImage current_status;
+    /*
+    SECTION 2: CONSTRUCTORS
+    */
+    public Teleportal(){
+<span class="nc" id="L23">        super();</span>
+<span class="nc" id="L24">        super.setRepresentation(null);</span>
+<span class="nc" id="L25">    }</span>
+    public Teleportal(int x, int y){
+<span class="nc" id="L27">        super(x, y);</span>
+<span class="nc" id="L28">        super.setRepresentation(null);</span>
+<span class="nc" id="L29">    }</span>
+    public Teleportal(PImage[] representations, int x, int y){
+<span class="fc" id="L31">        super(x, y);</span>
+<span class="fc" id="L32">        super.setRepresentation(null);</span>
+        
+<span class="fc" id="L34">        this.available = representations[0];</span>
+<span class="fc" id="L35">        this.unavailable = representations[1];</span>
+
+<span class="fc" id="L37">        this.current_status = available;</span>
+<span class="fc" id="L38">    }</span>
+    /* 
+    SECTION 3: SETTER AND GETTER FUNCTIONS
+    */
+    public void setAvailable(){
+<span class="fc" id="L43">        this.current_status = this.available;</span>
+<span class="fc" id="L44">    }</span>
+    public void setUnavailable(){
+<span class="nc" id="L46">        this.current_status = this.unavailable;</span>
+<span class="nc" id="L47">    }</span>
+    /*
+    SECTION 4: IMPLEMENTING COLLISIONS
+    */
+    public boolean collided(Wizard player){
+<span class="fc" id="L52">        int[] player_bounds = player.getBounds();</span>
+<span class="fc" id="L53">        int[] portal_bounds = super.getBounds();</span>
+
+<span class="pc bpc" id="L55" title="7 of 8 branches missed.">        if(((portal_bounds[0] == player_bounds[0] &amp;&amp; portal_bounds[1] == player_bounds[1])</span>
+        &amp;&amp; (portal_bounds[2] == player_bounds[2] &amp;&amp; portal_bounds[3] == player_bounds[3]))){
+            /*
+            NOTE:
+                - We only need to know whether
+                the wizard has collided with a portal.
+                Returns true if this happens
+            */
+<span class="nc" id="L63">            return true;</span>
+        }
+<span class="fc" id="L65">        return false;</span>
+    }
+    /*
+    NOTE:
+     */
+    public void draw(PApplet application){
+<span class="fc" id="L71">        application.image(this.current_status, super.getX(), super.getY());</span>
+<span class="fc" id="L72">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

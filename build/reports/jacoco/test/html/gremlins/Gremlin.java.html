@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Gremlin.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Gremlins</a> &gt; <a href="index.source.html" class="el_package">gremlins</a> &gt; <span class="el_source">Gremlin.java</span></div><h1>Gremlin.java</h1><pre class="source lang-java linenums">package gremlins;
+
+import processing.core.*;
+import processing.data.*;
+
+import java.util.*;
+import java.lang.*;
+import java.io.*;
+
+public class Gremlin extends Sprite implements Movement, Collision, Shooting{
+    /*
+    SECTION 1: DECLARATION AND INITIALIZATION OF CLASS ATTRIBUTES
+        AND PARAMETERS.
+    */
+    private boolean unable_left, unable_right, unable_up, unable_down;
+    private Direction current_direction;
+
+<span class="fc" id="L18">    public int cooldown_counter = 0;</span>
+<span class="fc" id="L19">    public boolean has_shot = false;</span>
+    /*
+    SECTION 2: CONSTRUCTORS
+    */
+    public Gremlin() {
+<span class="fc" id="L24">        super();</span>
+<span class="fc" id="L25">        super.setRepresentation(null);</span>
+<span class="fc" id="L26">    }</span>
+
+    public Gremlin(int x, int y) {
+<span class="fc" id="L29">        super(x, y);</span>
+<span class="fc" id="L30">        super.setRepresentation(null);</span>
+<span class="fc" id="L31">    }</span>
+
+    public Gremlin(PImage representation, int x, int y) {
+<span class="fc" id="L34">        super(representation, x, y);</span>
+
+<span class="fc" id="L36">        this.unable_left = false;</span>
+<span class="fc" id="L37">        this.unable_right = false;</span>
+<span class="fc" id="L38">        this.unable_up = false;</span>
+<span class="fc" id="L39">        this.unable_down = false;</span>
+
+        /*
+        NOTE:
+            - The `current_direction` variable for 
+            a Gremlin instance is different from that
+            of Wizard's. 
+         */
+<span class="fc" id="L47">        this.current_direction = Direction.NONE;</span>
+<span class="fc" id="L48">    }</span>
+    /* 
+    SECTION 3: SETTER AND GETTER FUNCTIONS
+    */
+<span class="fc" id="L52">    public int getCooldownCounter(){ return this.cooldown_counter;}</span>
+<span class="fc" id="L53">    public void setCooldownCounter(int cooldown_counter){ this.cooldown_counter = cooldown_counter;}</span>
+<span class="fc" id="L54">    public boolean getHasShot(){ return this.has_shot;}</span>
+<span class="fc" id="L55">    public void setHasShot(boolean has_shot){ this.has_shot = has_shot; }</span>
+
+    private Direction correspondingDirection(int value){
+        /*
+        NOTE:
+            - This function is private because it's useless
+            and would make no sense outside of the class.
+            However, this function is used for readability in the
+            Gremlin.getRandomDirection() method.
+         */
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        if(value == 0){</span>
+<span class="fc" id="L66">            return Direction.LEFT;</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        }else if(value == 1){</span>
+<span class="fc" id="L68">            return Direction.RIGHT;</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        }else if(value == 2){</span>
+<span class="fc" id="L70">            return Direction.UP;</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        }else if(value == 3){</span>
+<span class="fc" id="L72">            return Direction.DOWN;</span>
+        }else{
+<span class="fc" id="L74">            return Direction.NONE;</span>
+        }
+    }
+    /*
+    SECTION 4: IMPLEMENTING MOVEMENTS
+    */ 
+    public void move(){
+
+<span class="fc" id="L82">    }</span>
+    
+    public void move(int gremlin_speed){
+<span class="fc" id="L85">        final int PIXELS_PER_FRAME = gremlin_speed;</span>
+
+<span class="fc" id="L87">        Random rand = new Random();</span>
+
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        if(this.current_direction == Direction.NONE){</span>
+<span class="fc" id="L90">            this.current_direction = this.correspondingDirection(rand.nextInt(4));</span>
+        }
+
+        /*
+        NOTE:
+            - This is setting a vertical direction for the gremlin just
+            in case it hits a wall. All horizontal directions are
+            disabled.
+         */
+<span class="fc bfc" id="L99" title="All 8 branches covered.">        if((this.current_direction == Direction.LEFT &amp;&amp; this.unable_left)||</span>
+            (this.current_direction == Direction.RIGHT &amp;&amp; this.unable_right)){
+
+<span class="fc bfc" id="L102" title="All 4 branches covered.">            if(this.unable_up &amp;&amp; this.unable_down){</span>
+<span class="fc" id="L103">                this.current_direction = Direction.NONE;</span>
+<span class="fc" id="L104">                return;</span>
+            }
+
+<span class="fc" id="L107">            int random_vertical = rand.nextInt(2);</span>
+<span class="fc bfc" id="L108" title="All 4 branches covered.">            if(random_vertical == 0 &amp;&amp; !this.unable_up){</span>
+<span class="fc" id="L109">                this.current_direction = Direction.UP;</span>
+<span class="fc bfc" id="L110" title="All 4 branches covered.">            }else if(random_vertical == 1 &amp;&amp; !this.unable_down){</span>
+<span class="fc" id="L111">                this.current_direction = Direction.DOWN;</span>
+            }
+        }
+
+       /*
+        NOTE:
+            - On the other hand, this is setting a random vertical direction
+            for the gremlin as the gremlin cannot go back to the direction
+            it came from. 
+         */
+<span class="fc bfc" id="L121" title="All 8 branches covered.">        if((this.current_direction == Direction.UP &amp;&amp; this.unable_up)||</span>
+            (this.current_direction == Direction.DOWN &amp;&amp; this.unable_down)){
+            
+<span class="fc bfc" id="L124" title="All 4 branches covered.">            if(this.unable_left &amp;&amp; this.unable_right){</span>
+<span class="fc" id="L125">                this.current_direction = Direction.NONE;</span>
+<span class="fc" id="L126">                return;</span>
+            }
+
+<span class="fc" id="L129">            int random_horizontal = rand.nextInt(2);</span>
+<span class="fc bfc" id="L130" title="All 4 branches covered.">            if(random_horizontal == 0 &amp;&amp; !this.unable_left){</span>
+<span class="fc" id="L131">                this.current_direction = Direction.LEFT;</span>
+<span class="fc bfc" id="L132" title="All 4 branches covered.">            }else if(random_horizontal == 1 &amp;&amp; !this.unable_right){</span>
+<span class="fc" id="L133">                this.current_direction = Direction.RIGHT;</span>
+            }
+        }
+
+        /*
+        NOTE:
+            - This section actually moves the gremlin.
+         */
+<span class="fc bfc" id="L141" title="All 4 branches covered.">        if(this.current_direction == Direction.LEFT &amp;&amp; !this.unable_left){</span>
+<span class="fc" id="L142">            super.setCoordinate(super.getX() - PIXELS_PER_FRAME, super.getY());</span>
+<span class="fc bfc" id="L143" title="All 4 branches covered.">        }else if(this.current_direction == Direction.RIGHT &amp;&amp; !this.unable_right){</span>
+<span class="fc" id="L144">            super.setCoordinate(super.getX() + PIXELS_PER_FRAME, super.getY());</span>
+<span class="fc bfc" id="L145" title="All 4 branches covered.">        }else if(this.current_direction == Direction.UP &amp;&amp; !this.unable_up){</span>
+<span class="fc" id="L146">            super.setCoordinate(super.getX(), super.getY() - PIXELS_PER_FRAME);</span>
+<span class="fc bfc" id="L147" title="All 4 branches covered.">        }else if(this.current_direction == Direction.DOWN &amp;&amp; !this.unable_down){</span>
+<span class="fc" id="L148">            super.setCoordinate(super.getX(), super.getY() + PIXELS_PER_FRAME);</span>
+        }
+
+<span class="fc" id="L151">    }</span>
+    public void stop(){
+
+<span class="fc" id="L154">    }</span>
+    /*
+    SECTION 5: IMPLEMENTING COLLISIONS
+     */
+    public boolean collided(ArrayList&lt;Sprite&gt; walls){
+<span class="fc" id="L159">        int[] gremlin_bounds = super.getBounds();</span>
+
+<span class="fc" id="L161">        boolean flag = false;</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">        for(int index = 0; index &lt; walls.size(); index++){</span>
+<span class="fc" id="L163">            int[] wall_bounds = walls.get(index).getBounds();</span>
+            /*
+            NOTE:
+                - The if statement below is saying if the 
+                right bound of the gremlin is equal to the 
+                left bound of the wall and the gremlin
+                has the same y-coordinate as the wall
+                then they won't be able to move in the right
+                direction.
+             */
+<span class="fc bfc" id="L173" title="All 4 branches covered.">            if(wall_bounds[0] == gremlin_bounds[1] </span>
+            &amp;&amp; wall_bounds[2] == gremlin_bounds[2]){
+<span class="fc" id="L175">                this.unable_right = true;</span>
+<span class="fc" id="L176">                flag = true;</span>
+            }
+            /*
+            NOTE:
+                - Similarly, this is saying if the left bound
+                of the gremlin is equal to the right bound of
+                the wall then the gremlin cannot move left.
+             */
+<span class="fc bfc" id="L184" title="All 4 branches covered.">            if(wall_bounds[1] == gremlin_bounds[0] </span>
+            &amp;&amp; wall_bounds[2] == gremlin_bounds[2]){
+<span class="fc" id="L186">                this.unable_left = true;</span>
+<span class="fc" id="L187">                flag = true;</span>
+            }
+            /*
+            NOTE:
+                - Same, but for upper and lower bounds.
+                However, we have to make sure the x-axis
+                is the same.
+             */
+<span class="fc bfc" id="L195" title="All 4 branches covered.">            if(wall_bounds[2] == gremlin_bounds[3]</span>
+            &amp;&amp; wall_bounds[0] == gremlin_bounds[0]){
+<span class="fc" id="L197">                this.unable_down = true;</span>
+<span class="fc" id="L198">                flag = true;</span>
+            }
+            /*
+            NOTE:
+                - And again.
+             */
+<span class="fc bfc" id="L204" title="All 4 branches covered.">            if(wall_bounds[3] == gremlin_bounds[2]</span>
+            &amp;&amp; wall_bounds[0] == gremlin_bounds[0]){
+<span class="fc" id="L206">                this.unable_up = true;</span>
+<span class="fc" id="L207">                flag = true;</span>
+            }
+        }
+        
+<span class="fc bfc" id="L211" title="All 2 branches covered.">        if(flag){</span>
+<span class="fc" id="L212">            return flag;</span>
+        }
+
+        /*
+        NOTE:
+            - If the gremlin isn't colliding with any brick
+            or stonewall in the current frame then all of the
+            unable flags are set to false.
+         */
+<span class="fc" id="L221">        this.unable_left = false;</span>
+<span class="fc" id="L222">        this.unable_right = false;</span>
+<span class="fc" id="L223">        this.unable_up = false; </span>
+<span class="fc" id="L224">        this.unable_down = false;</span>
+
+<span class="fc" id="L226">        return false;</span>
+    }
+
+    public boolean collided(Wizard player){
+<span class="fc" id="L230">        int[] player_bounds = player.getBounds();</span>
+<span class="fc" id="L231">        int[] gremlin_bounds = super.getBounds();</span>
+
+<span class="pc bpc" id="L233" title="1 of 16 branches missed.">        if(((player_bounds[0] &lt; gremlin_bounds[1] &amp;&amp; player_bounds[0] &gt;= gremlin_bounds[0])</span>
+        &amp;&amp; (player_bounds[2] &lt; gremlin_bounds[3] &amp;&amp; player_bounds[2] &gt;= gremlin_bounds[2]))
+        || ((player_bounds[1] &gt; gremlin_bounds[0] &amp;&amp; player_bounds[1] &lt;= gremlin_bounds[1])
+        &amp;&amp; (player_bounds[3] &gt; gremlin_bounds[2] &amp;&amp; player_bounds[3] &lt;= gremlin_bounds[3]))){
+<span class="fc" id="L237">            return true;</span>
+        }
+
+<span class="fc" id="L240">        return false;</span>
+    }
+
+    public void shoot(){
+
+<span class="fc" id="L245">    }</span>
+
+    public void shoot(ArrayList&lt;Slime&gt; slimes, PImage rep_slime){
+<span class="fc" id="L248">        Slime temp = new Slime(rep_slime, super.getX(), super.getY());</span>
+<span class="fc" id="L249">        temp.setDirection(this.current_direction);</span>
+<span class="fc" id="L250">        slimes.add(temp);</span>
+<span class="fc" id="L251">    }</span>
+    /*
+    SECTION 6: OTHER FUNCTIONS
+    */ 
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
