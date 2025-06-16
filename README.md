@@ -2,7 +2,7 @@
 ### A modern take on the classic maze-chase arcade game.
 
 ## How to Play
-Navigate the maze, collect all dots while avoiding the colorful gremlins. Grab power pellets to temporarily turn the tables and chase the gremlins for bonus points.
+Navigate the maze, shoot gremlins and get to the door. Grab pokemon balls to freeze gremlins and use portals to teleport.
 
 ## Controls
 
@@ -11,7 +11,8 @@ Arrow keys to move and space to shoot.
 ## Features
 
 - Classic maze gameplay
-- Power pellets and bonus fruits
+- Pokemon balls to freeze gremlins' movement
+- Teleportation portals
 - Progressive difficulty levels
 
 ## Install & Run
